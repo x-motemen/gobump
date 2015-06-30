@@ -20,6 +20,7 @@ var rxVersionName = regexp.MustCompile(`^(?i)version$`)
 const defaultVersion = "0.0.0"
 
 type Config struct {
+	Exact      *semver.Version
 	MajorDelta uint64
 	MinorDelta uint64
 	PatchDelta uint64
@@ -27,10 +28,11 @@ type Config struct {
 
 func main() {
 	var (
-		write     = flag.Bool("w", false, "write result to (source) file instead of stdout")
-		bumpMajor = flag.Bool("major", false, "bump major version up")
-		bumpMinor = flag.Bool("minor", false, "bump minor version up")
-		bumpPatch = flag.Bool("patch", false, "bump patch version up")
+		write      = flag.Bool("w", false, "write result to (source) file instead of stdout")
+		bumpMajor  = flag.Bool("major", false, "bump major version up")
+		bumpMinor  = flag.Bool("minor", false, "bump minor version up")
+		bumpPatch  = flag.Bool("patch", false, "bump patch version up")
+		setVersion = flag.String("set", "", "set exact version (no bump)")
 	)
 	flag.Usage = func() {
 		fmt.Fprintln(os.Stderr, "usage: gobump (-major|-minor|-patch) [-w] [path]")
@@ -49,7 +51,10 @@ func main() {
 	dieIf(err)
 
 	conf := Config{}
-	if *bumpMajor {
+	if *setVersion != "" {
+		conf.Exact, err = semver.New(*setVersion)
+		dieIf(err)
+	} else if *bumpMajor {
 		conf.MajorDelta = 1
 	} else if *bumpMinor {
 		conf.MinorDelta = 1
@@ -153,6 +158,10 @@ func (c Config) bumpNode(node ast.Node) (names []string) {
 
 // bumpedVersion returns new bumped-up version according to given spec.
 func (c Config) bumpedVersion(version string) (string, error) {
+	if c.Exact != nil {
+		return c.Exact.String(), nil
+	}
+
 	v, err := semver.Parse(version)
 	if err != nil {
 		return "", err
