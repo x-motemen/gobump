@@ -24,7 +24,7 @@ const version = "2.3.4" // Must follow semver spec
 
 If you run
 
-    gobump -w -minor
+    gobump -minor
 
 you will get:
 
@@ -34,8 +34,15 @@ package main
 const version = "2.4.0"
 ----
 
-Other usages:
+Use `-w` to rewrite the file in-place.
 
-    gobump -major # 2.3.4 -> 3.0.0
-    gobump -minor # 2.3.4 -> 2.4.0
-    gobump -patch # 2.3.4 -> 2.3.5
+Other options:
+
+    gobump -major     # 2.3.4 -> 3.0.0
+    gobump -minor     # 2.3.4 -> 2.4.0
+    gobump -patch     # 2.3.4 -> 2.3.5
+    gobump -set 5.5.5 # 2.3.4 -> 5.5.5
+
+== AUTHOR
+
+motemen
