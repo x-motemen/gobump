@@ -52,7 +52,9 @@ func main() {
 	found := false
 	for _, pkg := range pkgs {
 		for _, f := range pkg.Files {
-			names := conf.ProcessNode(f)
+			names, err := conf.ProcessNode(fset, f)
+			dieIf(err)
+
 			if names != nil {
 				out := os.Stdout
 				if *write {
