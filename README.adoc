@@ -4,10 +4,38 @@ gobump bumps up program version by rewriting `version`-like variable/constant va
 
 == USAGE
 
-    gobump (-major|-minor|-patch) [-w] [directory]
+    usage: gobump (-major|-minor|-patch|-set <version>) [-w] [<path>]
+      -major=false: bump major version up
+      -minor=false: bump minor version up
+      -patch=false: bump patch version up
+      -set="": set exact version (no bump)
+      -w=false: write result to (source) file instead of stdout
 
 == EXAMPLE
 
-    gobump -minor # 2.3.4 -> 2.4.0
+Suppose you have a source file:
+
+[source,go]
+----
+package main
+
+const version = "2.3.4" // Must follow semver spec
+----
+
+If you run
+
+    gobump -w -minor
+
+you will get:
+
+----
+package main
+
+const version = "2.4.0"
+----
+
+Other usages:
 
     gobump -major # 2.3.4 -> 3.0.0
+    gobump -minor # 2.3.4 -> 2.4.0
+    gobump -patch # 2.3.4 -> 2.3.5

@@ -21,7 +21,7 @@ func main() {
 		setVersion = flag.String("set", "", "set exact version (no bump)")
 	)
 	flag.Usage = func() {
-		fmt.Fprintln(os.Stderr, "usage: gobump (-major|-minor|-patch) [-w] [path]")
+		fmt.Fprintln(os.Stderr, "usage: gobump (-major|-minor|-patch|-set <version>) [-w] [<path>]")
 		flag.PrintDefaults()
 		os.Exit(2)
 	}
