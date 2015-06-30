@@ -1,3 +1,14 @@
+/*
+gobump bumps up program version by rewriting `version`-like variable/constant values in the Go source code.
+
+Usage:
+	gobump (-major|-minor|-patch|-set <version>) [-w] [<path>]
+	  -major=false: bump major version up
+	  -minor=false: bump minor version up
+	  -patch=false: bump patch version up
+	  -set="": set exact version (no bump)
+	  -w=false: write result to (source) file instead of stdout
+*/
 package main
 
 import (
