@@ -59,6 +59,7 @@ func main() {
 		flag.Usage()
 	}
 
+	found := false
 	for _, pkg := range pkgs {
 		for _, f := range pkg.Files {
 			names := conf.bumpNode(f)
@@ -76,8 +77,14 @@ func main() {
 					Tabwidth: 8,
 				}
 				conf.Fprint(out, fset, f)
+
+				found = true
 			}
 		}
+	}
+
+	if found == false {
+		os.Exit(1)
 	}
 }
 
