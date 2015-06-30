@@ -1,0 +1,13 @@
+= gobump
+
+gobump bumps up program version by rewriting `version`-like variable/constant values in the Go source code.
+
+== USAGE
+
+    gobump (-major|-minor|-patch) [-w] [directory]
+
+== EXAMPLE
+
+    gobump -minor # 2.3.4 -> 2.4.0
+
+    gobump -major # 2.3.4 -> 3.0.0
