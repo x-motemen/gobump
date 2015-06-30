@@ -17,16 +17,25 @@ import (
 
 var defaultNamePattern = regexp.MustCompile(`^(?i)version$`)
 
+// Config is the entrypoint of gobump.
 type Config struct {
-	MajorDelta  uint64
-	MinorDelta  uint64
-	PatchDelta  uint64
-	Exact       string
+	// Increments major version. Precedes MinorDelta and PatchDelta.
+	MajorDelta uint64
+	// Increments minor version. Precedes PatchDelta.
+	MinorDelta uint64
+	// Increments patch version.
+	PatchDelta uint64
+	// Sets the version to exact version (no bump). Precedes all of above delta's.
+	Exact string
+	// The pattern of "version" variable/constants. Defaults to /^(?i)version$/.
 	NamePattern *regexp.Regexp
-	Default     string
+	// Default version in the case none was set. Defaults to "0.0.0".
+	Default string
 }
 
-func (conf Config) Process(filename string, src []byte) ([]byte, []string, error) {
+// Process takes a Go source file and bumps version declaration according to conf.
+// Returns the modified code and version identifier names and an error, if any.
+func (conf Config) Process(filename string, src interface{}) ([]byte, []string, error) {
 	fset := token.NewFileSet()
 	file, err := parser.ParseFile(fset, filename, src, parser.ParseComments)
 	if err != nil {
