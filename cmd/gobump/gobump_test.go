@@ -11,7 +11,7 @@ import (
 
 func TestBump(t *testing.T) {
 	fset := token.NewFileSet()
-	pkgs, err := parser.ParseDir(fset, "testdata/test1", nil, parser.Mode(0))
+	pkgs, err := parser.ParseDir(fset, "../../testdata/test1", nil, parser.Mode(0))
 	if err != nil {
 		t.Fatal(err)
 	}
