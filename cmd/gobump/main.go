@@ -44,7 +44,7 @@ func main() {
 	}
 
 	fset := token.NewFileSet()
-	pkgs, err := parser.ParseDir(fset, ".", nil, parser.Mode(0))
+	pkgs, err := parser.ParseDir(fset, target, nil, parser.ParseComments)
 	dieIf(err)
 
 	conf := gobump.Config{}
