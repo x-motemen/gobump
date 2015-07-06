@@ -2,11 +2,15 @@
 gobump bumps up program version by rewriting `version`-like variable/constant values in the Go source code.
 
 Usage:
-	gobump (-major|-minor|-patch|-set <version>) [-w] [<path>]
-	  -major=false: bump major version up
-	  -minor=false: bump minor version up
-	  -patch=false: bump patch version up
-	  -set="": set exact version (no bump)
+	gobump (major|minor|patch|set <version>) [-w] [-v] [<path>]
+
+Commands:
+	major             bump major version up
+	minor             bump minor version up
+	patch             bump patch version up
+	set <version>     set exact version (no bump)
+
+Flags:
 	  -v=false: show the resulting version values
 	  -w=false: write result to (source) file instead of stdout
 */
@@ -27,18 +31,50 @@ import (
 
 func main() {
 	var (
-		write      = flag.Bool("w", false, "write result to (source) file instead of stdout")
-		verbose    = flag.Bool("v", false, "show the resulting version values")
-		bumpMajor  = flag.Bool("major", false, "bump major version up")
-		bumpMinor  = flag.Bool("minor", false, "bump minor version up")
-		bumpPatch  = flag.Bool("patch", false, "bump patch version up")
-		setVersion = flag.String("set", "", "set exact version (no bump)")
+		write   = flag.Bool("w", false, "write result to (source) file instead of stdout")
+		verbose = flag.Bool("v", false, "show the resulting version values")
 	)
 	flag.Usage = func() {
-		fmt.Fprintln(os.Stderr, "usage: gobump (-major|-minor|-patch|-set <version>) [-w] [<path>]")
+		fmt.Fprintln(os.Stderr, "Usage: gobump (major|minor|patch|set <version>) [-w] [-v] [<path>]")
+		fmt.Fprintln(os.Stderr, "")
+		fmt.Fprintln(os.Stderr, `Commands:
+  major             bump major version up
+  minor             bump minor version up
+  patch             bump patch version up
+  set <version>     set exact version (no bump)
+`)
+		fmt.Fprintln(os.Stderr, "Flags:")
 		flag.PrintDefaults()
 		os.Exit(2)
 	}
+
+	shift := func() string {
+		if len(os.Args) < 2 {
+			flag.Usage()
+		}
+
+		arg := os.Args[1]
+		os.Args = append(os.Args[:1], os.Args[2:]...)
+
+		return arg
+	}
+
+	conf := gobump.Config{}
+
+	command := shift()
+	switch command {
+	case "major":
+		conf.MajorDelta = 1
+	case "minor":
+		conf.MinorDelta = 1
+	case "patch":
+		conf.PatchDelta = 1
+	case "set":
+		conf.Exact = shift()
+	default:
+		flag.Usage()
+	}
+
 	flag.Parse()
 
 	target := flag.Arg(0)
@@ -49,19 +85,6 @@ func main() {
 	fset := token.NewFileSet()
 	pkgs, err := parser.ParseDir(fset, target, nil, parser.ParseComments)
 	dieIf(err)
-
-	conf := gobump.Config{}
-	if *setVersion != "" {
-		conf.Exact = *setVersion
-	} else if *bumpMajor {
-		conf.MajorDelta = 1
-	} else if *bumpMinor {
-		conf.MinorDelta = 1
-	} else if *bumpPatch {
-		conf.PatchDelta = 1
-	} else {
-		flag.Usage()
-	}
 
 	found := false
 	for _, pkg := range pkgs {
