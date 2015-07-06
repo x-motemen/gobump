@@ -7,6 +7,7 @@ Usage:
 	  -minor=false: bump minor version up
 	  -patch=false: bump patch version up
 	  -set="": set exact version (no bump)
+	  -v=false: show the resulting version values
 	  -w=false: write result to (source) file instead of stdout
 */
 package main
