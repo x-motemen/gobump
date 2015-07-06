@@ -12,6 +12,7 @@ Usage:
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
@@ -26,6 +27,7 @@ import (
 func main() {
 	var (
 		write      = flag.Bool("w", false, "write result to (source) file instead of stdout")
+		verbose    = flag.Bool("v", false, "show the resulting version values")
 		bumpMajor  = flag.Bool("major", false, "bump major version up")
 		bumpMinor  = flag.Bool("minor", false, "bump minor version up")
 		bumpPatch  = flag.Bool("patch", false, "bump patch version up")
@@ -63,10 +65,15 @@ func main() {
 	found := false
 	for _, pkg := range pkgs {
 		for _, f := range pkg.Files {
-			names, err := conf.ProcessNode(fset, f)
+			vers, err := conf.ProcessNode(fset, f)
 			dieIf(err)
 
-			if names != nil {
+			// rewrote successfully
+			if vers != nil {
+				if *verbose {
+					json.NewEncoder(os.Stdout).Encode(vers)
+				}
+
 				out := os.Stdout
 				if *write {
 					file, err := os.Create(fset.File(f.Pos()).Name())

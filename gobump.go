@@ -34,15 +34,15 @@ type Config struct {
 }
 
 // Process takes a Go source file and bumps version declaration according to conf.
-// Returns the modified code and version identifier names and an error, if any.
-func (conf Config) Process(filename string, src interface{}) ([]byte, []string, error) {
+// Returns the modified code and a map from identifiers to updated versions and an error, if any.
+func (conf Config) Process(filename string, src interface{}) ([]byte, map[string]string, error) {
 	fset := token.NewFileSet()
 	file, err := parser.ParseFile(fset, filename, src, parser.ParseComments)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	names, err := conf.ProcessNode(fset, file)
+	versiosn, err := conf.ProcessNode(fset, file)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -60,7 +60,7 @@ func (conf Config) Process(filename string, src interface{}) ([]byte, []string, 
 		return nil, nil, err
 	}
 
-	return out, names, nil
+	return out, versiosn, nil
 }
 
 // NodeErr represents for a ProcessNode error.
@@ -75,8 +75,8 @@ func (e NodeErr) Error() string {
 }
 
 // ProcessNode finds and bumps up "version" value found inside given node.
-// returns the rewrote identifiers inside node.
-func (conf Config) ProcessNode(fset *token.FileSet, node ast.Node) (names []string, nodeErr error) {
+// returns the map from identifier names rewrote inside node to version string.
+func (conf Config) ProcessNode(fset *token.FileSet, node ast.Node) (versions map[string]string, nodeErr error) {
 	namePattern := defaultNamePattern
 	if conf.NamePattern != nil {
 		namePattern = conf.NamePattern
@@ -147,10 +147,10 @@ func (conf Config) ProcessNode(fset *token.FileSet, node ast.Node) (names []stri
 					Value: strconv.Quote(ver),
 				}
 
-				if names == nil {
-					names = []string{}
+				if versions == nil {
+					versions = map[string]string{}
 				}
-				names = append(names, ident.Name)
+				versions[ident.Name] = ver
 			}
 		}
 

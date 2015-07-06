@@ -20,12 +20,21 @@ func TestBump(t *testing.T) {
 
 	for _, pkg := range pkgs {
 		for _, f := range pkg.Files {
-			names, err := conf.ProcessNode(fset, f)
+			vers, err := conf.ProcessNode(fset, f)
 			if err != nil {
 				t.Errorf("got error: %s", err)
 			}
-			if len(names) != 2 || names[0] != "version" || names[1] != "VERSION" {
-				t.Errorf("expected %v: %v", []string{"version", "VERSION"}, names)
+			if _, ok := vers["version"]; !ok {
+				t.Errorf("should detect `version`")
+			}
+			if _, ok := vers["VERSION"]; !ok {
+				t.Errorf("should detect `VERSION`")
+			}
+			if vers["version"] != "1.1.0" {
+				t.Errorf("expected %v: got %v", "1.1.0", vers["version"])
+			}
+			if vers["VERSION"] != "2.1.0" {
+				t.Errorf("expected %v: got %v", "2.1.0", vers["VERSION"])
 			}
 		}
 	}
