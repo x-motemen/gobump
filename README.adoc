@@ -4,11 +4,15 @@ gobump bumps up program version by rewriting `version`-like variable/constant va
 
 == USAGE
 
-    usage: gobump (-major|-minor|-patch|-set <version>) [-w] [<path>]
-      -major=false: bump major version up
-      -minor=false: bump minor version up
-      -patch=false: bump patch version up
-      -set="": set exact version (no bump)
+    Usage: gobump (major|minor|patch|set <version>) [-w] [-v] [<path>]
+
+    Commands:
+      major             bump major version up
+      minor             bump minor version up
+      patch             bump patch version up
+      set <version>     set exact version (no bump)
+
+    Flags:
       -v=false: show the resulting version values
       -w=false: write result to (source) file instead of stdout
 
@@ -25,7 +29,7 @@ const version = "2.3.4" // must follow semver spec
 
 If you run
 
-    gobump -minor
+    gobump minor
 
 you will get:
 
@@ -40,10 +44,10 @@ Use `-w` to rewrite the file in-place.
 
 Other options:
 
-    gobump -major     # 2.3.4 -> 3.0.0
-    gobump -minor     # 2.3.4 -> 2.4.0
-    gobump -patch     # 2.3.4 -> 2.3.5
-    gobump -set 5.5.5 # 2.3.4 -> 5.5.5
+    gobump major     # 2.3.4 -> 3.0.0
+    gobump minor     # 2.3.4 -> 2.4.0
+    gobump patch     # 2.3.4 -> 2.3.5
+    gobump set 5.5.5 # 2.3.4 -> 5.5.5
 
 == AUTHOR
 
