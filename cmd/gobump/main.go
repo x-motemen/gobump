@@ -8,7 +8,8 @@ Commands:
 	major             bump major version up
 	minor             bump minor version up
 	patch             bump patch version up
-	set <version>     set exact version (no bump)
+	set <version>     set exact version (no increments)
+	show              only show the versions (implies -v)
 
 Flags:
 	  -v=false: show the resulting version values
@@ -41,7 +42,8 @@ func main() {
   major             bump major version up
   minor             bump minor version up
   patch             bump patch version up
-  set <version>     set exact version (no bump)
+  set <version>     set exact version (no increments)
+  show              only show the versions (implies -v)
 `)
 		fmt.Fprintln(os.Stderr, "Flags:")
 		flag.PrintDefaults()
@@ -61,6 +63,8 @@ func main() {
 
 	conf := gobump.Config{}
 
+	var noWrite bool
+
 	command := shift()
 	switch command {
 	case "major":
@@ -71,6 +75,9 @@ func main() {
 		conf.PatchDelta = 1
 	case "set":
 		conf.Exact = shift()
+	case "show":
+		noWrite = true
+		*verbose = true
 	default:
 		flag.Usage()
 	}
@@ -94,8 +101,14 @@ func main() {
 
 			// rewrote successfully
 			if vers != nil {
+				found = true
+
 				if *verbose {
 					json.NewEncoder(os.Stdout).Encode(vers)
+				}
+
+				if noWrite {
+					continue
 				}
 
 				out := os.Stdout
@@ -111,8 +124,6 @@ func main() {
 					Tabwidth: 8,
 				}
 				conf.Fprint(out, fset, f)
-
-				found = true
 			}
 		}
 	}

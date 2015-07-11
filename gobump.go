@@ -42,7 +42,7 @@ func (conf Config) Process(filename string, src interface{}) ([]byte, map[string
 		return nil, nil, err
 	}
 
-	versiosn, err := conf.ProcessNode(fset, file)
+	versions, err := conf.ProcessNode(fset, file)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -60,7 +60,7 @@ func (conf Config) Process(filename string, src interface{}) ([]byte, map[string
 		return nil, nil, err
 	}
 
-	return out, versiosn, nil
+	return out, versions, nil
 }
 
 // NodeErr represents for a ProcessNode error.
