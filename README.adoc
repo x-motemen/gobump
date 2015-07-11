@@ -1,6 +1,6 @@
 = gobump
 
-gobump bumps up program version by rewriting `version`-like variable/constant values in the Go source code.
+`gobump` bumps up program version by rewriting `version`-like variable/constant values in the Go source code following http://semver.org/[SemVer].
 
 == USAGE
 
