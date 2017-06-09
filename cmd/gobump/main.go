@@ -34,7 +34,7 @@ func main() {
 	var (
 		write   = flag.Bool("w", false, "write result to (source) file instead of stdout")
 		verbose = flag.Bool("v", false, "show the resulting version values")
-		raw     = flag.Bool("r", false, "outputs in raw text instead of JSON when output exists")
+		raw     = flag.Bool("r", false, "output in raw text instead of JSON when output exists")
 	)
 	flag.Usage = func() {
 		fmt.Fprintln(os.Stderr, "Usage: gobump (major|minor|patch|set <version>) [-w] [-v] [<path>]")
