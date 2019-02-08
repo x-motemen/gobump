@@ -31,6 +31,8 @@ import (
 	"github.com/motemen/gobump"
 )
 
+const cmdName = "gobump"
+
 func main() {
 	var (
 		write   = flag.Bool("w", false, "write result to (source) file instead of stdout")
@@ -92,7 +94,7 @@ func main() {
 	}
 
 	if err := run(conf, target, *raw, *write, noWrite, *verbose); err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintf(os.Stderr, "%s: %s\n", cmdName, err)
 		os.Exit(1)
 	}
 }
