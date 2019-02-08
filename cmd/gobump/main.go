@@ -19,6 +19,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -90,22 +91,33 @@ func main() {
 		target = "."
 	}
 
+	if err := run(conf, target, *raw, *write, noWrite, *verbose); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+}
+
+func run(conf gobump.Config, target string, raw, write, noWrite, verbose bool) error {
 	fset := token.NewFileSet()
 	pkgs, err := parser.ParseDir(fset, target, nil, parser.ParseComments)
-	dieIf(err)
+	if err != nil {
+		return err
+	}
 
 	found := false
 	for _, pkg := range pkgs {
 		for _, f := range pkg.Files {
 			vers, err := conf.ProcessNode(fset, f)
-			dieIf(err)
+			if err != nil {
+				return err
+			}
 
 			// rewrote successfully
 			if vers != nil {
 				found = true
 
-				if *verbose {
-					if *raw {
+				if verbose {
+					if raw {
 						for _, v := range vers {
 							fmt.Println(v)
 						}
@@ -119,9 +131,11 @@ func main() {
 				}
 
 				out := os.Stdout
-				if *write {
+				if write {
 					file, err := os.Create(fset.File(f.Pos()).Name())
-					dieIf(err)
+					if err != nil {
+						return err
+					}
 
 					out = file
 				}
@@ -135,14 +149,9 @@ func main() {
 		}
 	}
 
-	if found == false {
-		os.Exit(1)
+	if !found {
+		return errors.New("target file not found")
 	}
-}
 
-func dieIf(err error) {
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
+	return nil
 }
