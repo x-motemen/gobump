@@ -6,6 +6,7 @@ import (
 	"os"
 )
 
+// Run the gobump
 func Run(argv []string) error {
 	gb := &Gobump{}
 	fs := flag.NewFlagSet("gobump", flag.ContinueOnError)

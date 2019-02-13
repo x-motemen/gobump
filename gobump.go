@@ -17,6 +17,7 @@ import (
 	"github.com/blang/semver"
 )
 
+// Gobump is main application struct
 type Gobump struct {
 	Write, Verbose, Raw, Show bool
 	Target                    string
@@ -24,6 +25,7 @@ type Gobump struct {
 	Config Config
 }
 
+// Run the gobump
 func (gb *Gobump) Run() error {
 	if gb.Target == "" {
 		gb.Target = "."
