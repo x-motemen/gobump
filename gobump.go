@@ -42,40 +42,25 @@ func (gb *Gobump) Run() error {
 			if err != nil {
 				return err
 			}
+			if vers == nil {
+				continue
+			}
 
-			// rewrote successfully
-			if vers != nil {
-				found = true
-
-				if gb.Verbose || gb.Show {
-					if gb.Raw {
-						for _, v := range vers {
-							fmt.Println(v)
-						}
-					} else {
-						json.NewEncoder(os.Stdout).Encode(vers)
+			found = true
+			if gb.Verbose || gb.Show {
+				if gb.Raw {
+					for _, v := range vers {
+						fmt.Println(v)
 					}
+				} else {
+					json.NewEncoder(os.Stdout).Encode(vers)
 				}
-
-				if gb.Show {
-					continue
-				}
-
-				out := os.Stdout
-				if gb.Write {
-					file, err := os.Create(fset.File(f.Pos()).Name())
-					if err != nil {
-						return err
-					}
-					defer file.Close()
-					out = file
-				}
-
-				conf := &printer.Config{
-					Mode:     printer.UseSpaces | printer.TabIndent,
-					Tabwidth: 8,
-				}
-				conf.Fprint(out, fset, f)
+			}
+			if gb.Show {
+				continue
+			}
+			if err := gb.out(fset, f); err != nil {
+				return err
 			}
 		}
 	}
@@ -84,6 +69,24 @@ func (gb *Gobump) Run() error {
 		return fmt.Errorf("version not found")
 	}
 	return nil
+}
+
+func (gb *Gobump) out(fset *token.FileSet, f *ast.File) error {
+	out := os.Stdout
+	if gb.Write {
+		file, err := os.Create(fset.File(f.Pos()).Name())
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+		out = file
+	}
+
+	conf := &printer.Config{
+		Mode:     printer.UseSpaces | printer.TabIndent,
+		Tabwidth: 8,
+	}
+	return conf.Fprint(out, fset, f)
 }
 
 var defaultNamePattern = regexp.MustCompile(`^(?i)version$`)
