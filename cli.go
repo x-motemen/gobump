@@ -3,27 +3,30 @@ package gobump
 import (
 	"flag"
 	"fmt"
-	"os"
+	"io"
 )
 
 // Run the gobump
-func Run(argv []string) error {
-	gb := &Gobump{}
+func Run(argv []string, outStream, errStream io.Writer) error {
+	gb := &Gobump{
+		OutStream: outStream,
+	}
 	fs := flag.NewFlagSet("gobump", flag.ContinueOnError)
 	fs.BoolVar(&gb.Write, "w", false, "write result to (source) file instead of stdout")
 	fs.BoolVar(&gb.Verbose, "v", false, "show the resulting version values")
 	fs.BoolVar(&gb.Raw, "r", false, "output in raw text instead of JSON when output exists")
 	fs.Usage = func() {
-		fmt.Fprintln(os.Stderr, "Usage: gobump (major|minor|patch|set <version>) [-w] [-v] [<path>]")
-		fmt.Fprintln(os.Stderr, "")
-		fmt.Fprintln(os.Stderr, `Commands:
+		out := errStream
+		fs.SetOutput(out)
+		fmt.Fprintln(out, `Usage: gobump (major|minor|patch|set <version>) [-w] [-v] [<path>]
+
+Commands:
   major             bump major version up
   minor             bump minor version up
   patch             bump patch version up
   set <version>     set exact version (no increments)
   show              only show the versions (implies -v)
-`)
-		fmt.Fprintln(os.Stderr, "Flags:")
+Flags:`)
 		fs.PrintDefaults()
 	}
 

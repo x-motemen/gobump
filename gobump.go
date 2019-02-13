@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"regexp"
 	"strconv"
@@ -22,11 +23,15 @@ type Gobump struct {
 	Write, Verbose, Raw, Show bool
 	Target                    string
 
-	Config Config
+	Config    Config
+	OutStream io.Writer
 }
 
 // Run the gobump
 func (gb *Gobump) Run() error {
+	if gb.OutStream == nil {
+		gb.OutStream = os.Stdout
+	}
 	if gb.Target == "" {
 		gb.Target = "."
 	}
@@ -52,10 +57,10 @@ func (gb *Gobump) Run() error {
 			if gb.Verbose || gb.Show {
 				if gb.Raw {
 					for _, v := range vers {
-						fmt.Println(v)
+						fmt.Fprintln(gb.OutStream, v)
 					}
 				} else {
-					json.NewEncoder(os.Stdout).Encode(vers)
+					json.NewEncoder(gb.OutStream).Encode(vers)
 				}
 			}
 			if gb.Show {
@@ -74,7 +79,7 @@ func (gb *Gobump) Run() error {
 }
 
 func (gb *Gobump) out(fset *token.FileSet, f *ast.File) error {
-	out := os.Stdout
+	out := gb.OutStream
 	if gb.Write {
 		file, err := os.Create(fset.File(f.Pos()).Name())
 		if err != nil {
