@@ -15,6 +15,11 @@ import (
 	"github.com/blang/semver"
 )
 
+type gobump struct {
+	write, verbose, raw, show bool
+	target                    string
+}
+
 var defaultNamePattern = regexp.MustCompile(`^(?i)version$`)
 
 // Config is the entrypoint of gobump.

@@ -11,12 +11,11 @@ import (
 )
 
 func Run(argv []string) error {
+	gb := &gobump{}
 	fs := flag.NewFlagSet("gobump", flag.ContinueOnError)
-	var (
-		write   = fs.Bool("w", false, "write result to (source) file instead of stdout")
-		verbose = fs.Bool("v", false, "show the resulting version values")
-		raw     = fs.Bool("r", false, "output in raw text instead of JSON when output exists")
-	)
+	fs.BoolVar(&gb.write, "w", false, "write result to (source) file instead of stdout")
+	fs.BoolVar(&gb.verbose, "v", false, "show the resulting version values")
+	fs.BoolVar(&gb.raw, "r", false, "output in raw text instead of JSON when output exists")
 	fs.Usage = func() {
 		fmt.Fprintln(os.Stderr, "Usage: gobump (major|minor|patch|set <version>) [-w] [-v] [<path>]")
 		fmt.Fprintln(os.Stderr, "")
@@ -36,7 +35,6 @@ func Run(argv []string) error {
 	}
 
 	conf := Config{}
-	var noWrite bool
 	parseOffset := 1
 	switch argv[0] {
 	case "major":
@@ -52,8 +50,8 @@ func Run(argv []string) error {
 		conf.Exact = argv[1]
 		parseOffset = 2
 	case "show":
-		noWrite = true
-		*verbose = true
+		gb.show = true
+		gb.verbose = true
 	case "-h", "-help", "--help":
 		parseOffset = 0
 	default:
@@ -63,13 +61,13 @@ func Run(argv []string) error {
 		return err
 	}
 
-	target := fs.Arg(0)
-	if target == "" {
-		target = "."
+	gb.target = fs.Arg(0)
+	if gb.target == "" {
+		gb.target = "."
 	}
 
 	fset := token.NewFileSet()
-	pkgs, err := parser.ParseDir(fset, target, nil, parser.ParseComments)
+	pkgs, err := parser.ParseDir(fset, gb.target, nil, parser.ParseComments)
 	if err != nil {
 		return err
 	}
@@ -86,8 +84,8 @@ func Run(argv []string) error {
 			if vers != nil {
 				found = true
 
-				if *verbose {
-					if *raw {
+				if gb.verbose {
+					if gb.raw {
 						for _, v := range vers {
 							fmt.Println(v)
 						}
@@ -96,12 +94,12 @@ func Run(argv []string) error {
 					}
 				}
 
-				if noWrite {
+				if gb.show {
 					continue
 				}
 
 				out := os.Stdout
-				if *write {
+				if gb.write {
 					file, err := os.Create(fset.File(f.Pos()).Name())
 					if err != nil {
 						return err
