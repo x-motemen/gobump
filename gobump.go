@@ -2,7 +2,9 @@ package gobump
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
+	"os"
 	"regexp"
 	"strconv"
 
@@ -18,6 +20,69 @@ import (
 type gobump struct {
 	write, verbose, raw, show bool
 	target                    string
+}
+
+func (gb *gobump) run(conf Config) error {
+	if gb.target == "" {
+		gb.target = "."
+	}
+
+	fset := token.NewFileSet()
+	pkgs, err := parser.ParseDir(fset, gb.target, nil, parser.ParseComments)
+	if err != nil {
+		return err
+	}
+
+	found := false
+	for _, pkg := range pkgs {
+		for _, f := range pkg.Files {
+			vers, err := conf.ProcessNode(fset, f)
+			if err != nil {
+				return err
+			}
+
+			// rewrote successfully
+			if vers != nil {
+				found = true
+
+				if gb.verbose {
+					if gb.raw {
+						for _, v := range vers {
+							fmt.Println(v)
+						}
+					} else {
+						json.NewEncoder(os.Stdout).Encode(vers)
+					}
+				}
+
+				if gb.show {
+					continue
+				}
+
+				out := os.Stdout
+				if gb.write {
+					file, err := os.Create(fset.File(f.Pos()).Name())
+					if err != nil {
+						return err
+					}
+					defer file.Close()
+					out = file
+				}
+
+				conf := &printer.Config{
+					Mode:     printer.UseSpaces | printer.TabIndent,
+					Tabwidth: 8,
+				}
+				conf.Fprint(out, fset, f)
+			}
+		}
+	}
+
+	if found == false {
+		return fmt.Errorf("version not found")
+	}
+	return nil
+
 }
 
 var defaultNamePattern = regexp.MustCompile(`^(?i)version$`)
