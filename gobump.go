@@ -17,18 +17,20 @@ import (
 	"github.com/blang/semver"
 )
 
-type gobump struct {
-	write, verbose, raw, show bool
-	target                    string
+type Gobump struct {
+	Write, Verbose, Raw, Show bool
+	Target                    string
+
+	Config Config
 }
 
-func (gb *gobump) run(conf Config) error {
-	if gb.target == "" {
-		gb.target = "."
+func (gb *Gobump) Run() error {
+	if gb.Target == "" {
+		gb.Target = "."
 	}
 
 	fset := token.NewFileSet()
-	pkgs, err := parser.ParseDir(fset, gb.target, nil, parser.ParseComments)
+	pkgs, err := parser.ParseDir(fset, gb.Target, nil, parser.ParseComments)
 	if err != nil {
 		return err
 	}
@@ -36,7 +38,7 @@ func (gb *gobump) run(conf Config) error {
 	found := false
 	for _, pkg := range pkgs {
 		for _, f := range pkg.Files {
-			vers, err := conf.ProcessNode(fset, f)
+			vers, err := gb.Config.ProcessNode(fset, f)
 			if err != nil {
 				return err
 			}
@@ -45,8 +47,8 @@ func (gb *gobump) run(conf Config) error {
 			if vers != nil {
 				found = true
 
-				if gb.verbose {
-					if gb.raw {
+				if gb.Verbose || gb.Show {
+					if gb.Raw {
 						for _, v := range vers {
 							fmt.Println(v)
 						}
@@ -55,12 +57,12 @@ func (gb *gobump) run(conf Config) error {
 					}
 				}
 
-				if gb.show {
+				if gb.Show {
 					continue
 				}
 
 				out := os.Stdout
-				if gb.write {
+				if gb.Write {
 					file, err := os.Create(fset.File(f.Pos()).Name())
 					if err != nil {
 						return err
@@ -82,7 +84,6 @@ func (gb *gobump) run(conf Config) error {
 		return fmt.Errorf("version not found")
 	}
 	return nil
-
 }
 
 var defaultNamePattern = regexp.MustCompile(`^(?i)version$`)

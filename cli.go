@@ -7,11 +7,11 @@ import (
 )
 
 func Run(argv []string) error {
-	gb := &gobump{}
+	gb := &Gobump{}
 	fs := flag.NewFlagSet("gobump", flag.ContinueOnError)
-	fs.BoolVar(&gb.write, "w", false, "write result to (source) file instead of stdout")
-	fs.BoolVar(&gb.verbose, "v", false, "show the resulting version values")
-	fs.BoolVar(&gb.raw, "r", false, "output in raw text instead of JSON when output exists")
+	fs.BoolVar(&gb.Write, "w", false, "write result to (source) file instead of stdout")
+	fs.BoolVar(&gb.Verbose, "v", false, "show the resulting version values")
+	fs.BoolVar(&gb.Raw, "r", false, "output in raw text instead of JSON when output exists")
 	fs.Usage = func() {
 		fmt.Fprintln(os.Stderr, "Usage: gobump (major|minor|patch|set <version>) [-w] [-v] [<path>]")
 		fmt.Fprintln(os.Stderr, "")
@@ -30,24 +30,22 @@ func Run(argv []string) error {
 		return fmt.Errorf("please specify subcommand. `gobump -h` for more details")
 	}
 
-	conf := Config{}
 	parseOffset := 1
 	switch argv[0] {
 	case "major":
-		conf.MajorDelta = 1
+		gb.Config.MajorDelta = 1
 	case "minor":
-		conf.MinorDelta = 1
+		gb.Config.MinorDelta = 1
 	case "patch":
-		conf.PatchDelta = 1
+		gb.Config.PatchDelta = 1
 	case "set":
 		if len(argv) < 2 {
 			return fmt.Errorf("please specify a version to set")
 		}
-		conf.Exact = argv[1]
+		gb.Config.Exact = argv[1]
 		parseOffset = 2
 	case "show":
-		gb.show = true
-		gb.verbose = true
+		gb.Show = true
 	case "-h", "-help", "--help":
 		parseOffset = 0
 	default:
@@ -57,6 +55,6 @@ func Run(argv []string) error {
 		return err
 	}
 
-	gb.target = fs.Arg(0)
-	return gb.run(conf)
+	gb.Target = fs.Arg(0)
+	return gb.Run()
 }
