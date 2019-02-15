@@ -2,7 +2,10 @@ package gobump
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
+	"io"
+	"os"
 	"regexp"
 	"strconv"
 
@@ -14,6 +17,84 @@ import (
 
 	"github.com/blang/semver"
 )
+
+// Gobump is main application struct
+type Gobump struct {
+	Write, Verbose, Raw, Show bool
+	Target                    string
+
+	Config    Config
+	OutStream io.Writer
+}
+
+// Run the gobump
+func (gb *Gobump) Run() error {
+	if gb.OutStream == nil {
+		gb.OutStream = os.Stdout
+	}
+	if gb.Target == "" {
+		gb.Target = "."
+	}
+
+	fset := token.NewFileSet()
+	pkgs, err := parser.ParseDir(fset, gb.Target, nil, parser.ParseComments)
+	if err != nil {
+		return err
+	}
+
+	found := false
+	for _, pkg := range pkgs {
+		for _, f := range pkg.Files {
+			vers, err := gb.Config.ProcessNode(fset, f)
+			if err != nil {
+				return err
+			}
+			if vers == nil {
+				continue
+			}
+
+			found = true
+			if gb.Verbose || gb.Show {
+				if gb.Raw {
+					for _, v := range vers {
+						fmt.Fprintln(gb.OutStream, v)
+					}
+				} else {
+					json.NewEncoder(gb.OutStream).Encode(vers)
+				}
+			}
+			if gb.Show {
+				continue
+			}
+			if err := gb.out(fset, f); err != nil {
+				return err
+			}
+		}
+	}
+
+	if found == false {
+		return fmt.Errorf("version not found")
+	}
+	return nil
+}
+
+func (gb *Gobump) out(fset *token.FileSet, f *ast.File) error {
+	out := gb.OutStream
+	if gb.Write {
+		file, err := os.Create(fset.File(f.Pos()).Name())
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+		out = file
+	}
+
+	conf := &printer.Config{
+		Mode:     printer.UseSpaces | printer.TabIndent,
+		Tabwidth: 8,
+	}
+	return conf.Fprint(out, fset, f)
+}
 
 var defaultNamePattern = regexp.MustCompile(`^(?i)version$`)
 
