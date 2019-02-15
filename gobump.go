@@ -28,7 +28,7 @@ type Gobump struct {
 }
 
 // Run the gobump
-func (gb *Gobump) Run() error {
+func (gb *Gobump) Run() (map[string]map[string]string, error) {
 	if gb.OutStream == nil {
 		gb.OutStream = os.Stdout
 	}
@@ -39,20 +39,22 @@ func (gb *Gobump) Run() error {
 	fset := token.NewFileSet()
 	pkgs, err := parser.ParseDir(fset, gb.Target, nil, parser.ParseComments)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
+	ret := make(map[string]map[string]string)
 	found := false
 	for _, pkg := range pkgs {
 		for _, f := range pkg.Files {
 			vers, err := gb.Config.ProcessNode(fset, f)
 			if err != nil {
-				return err
+				return nil, err
 			}
 			if vers == nil {
 				continue
 			}
 
+			ret[fset.File(f.Pos()).Name()] = vers
 			found = true
 			if gb.Verbose || gb.Show {
 				if gb.Raw {
@@ -67,20 +69,21 @@ func (gb *Gobump) Run() error {
 				continue
 			}
 			if err := gb.out(fset, f); err != nil {
-				return err
+				return nil, err
 			}
 		}
 	}
 
 	if found == false {
-		return fmt.Errorf("version not found")
+		return nil, fmt.Errorf("version not found")
 	}
-	return nil
+	return ret, nil
 }
 
 func (gb *Gobump) out(fset *token.FileSet, f *ast.File) error {
 	out := gb.OutStream
 	if gb.Write {
+		// XXX shoule be use tmpfile here?
 		file, err := os.Create(fset.File(f.Pos()).Name())
 		if err != nil {
 			return err

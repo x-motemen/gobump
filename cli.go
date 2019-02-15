@@ -60,5 +60,6 @@ Flags:`)
 	}
 
 	gb.Target = fs.Arg(0)
-	return gb.Run()
+	_, err := gb.Run()
+	return err
 }
