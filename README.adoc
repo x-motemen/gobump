@@ -50,6 +50,12 @@ Other options:
     gobump patch     # 2.3.4 -> 2.3.5
     gobump set 5.5.5 # 2.3.4 -> 5.5.5
 
+== INSTALL
+
+```
+go get github.com/motemen/gobump/cmd/gobump
+```
+
 == AUTHOR
 
 motemen
