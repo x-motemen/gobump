@@ -111,6 +111,8 @@ type Config struct {
 	PatchDelta uint64
 	// Sets the version to exact version (no bump). Precedes all of above delta's.
 	Exact string
+	// Return an error when the exact version is not greater than the current version.
+	CheckVersionUp bool
 	// The pattern of "version" variable/constants. Defaults to /^(?i)version$/.
 	NamePattern *regexp.Regexp
 	// Default version in the case none was set. Defaults to "0.0.0".
@@ -250,6 +252,14 @@ func (conf Config) bumpedVersion(version string) (string, error) {
 		exact, err := semver.New(conf.Exact)
 		if err != nil {
 			return "", err
+		}
+
+		if conf.CheckVersionUp {
+			if v, err := semver.Parse(version); err == nil {
+				if !exact.GT(v) {
+					return "", fmt.Errorf("version %s is not greater than the current version", exact)
+				}
+			}
 		}
 
 		return exact.String(), nil

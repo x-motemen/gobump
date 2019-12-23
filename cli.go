@@ -11,10 +11,12 @@ func Run(argv []string, outStream, errStream io.Writer) error {
 	gb := &Gobump{
 		OutStream: outStream,
 	}
+	var checkVersionUp bool
 	fs := flag.NewFlagSet("gobump", flag.ContinueOnError)
 	fs.BoolVar(&gb.Write, "w", false, "write result to (source) file instead of stdout")
 	fs.BoolVar(&gb.Verbose, "v", false, "show the resulting version values")
 	fs.BoolVar(&gb.Raw, "r", false, "output in raw text instead of JSON when output exists")
+	fs.BoolVar(&checkVersionUp, "u", false, "ensure version up with the set command")
 	fs.Usage = func() {
 		out := errStream
 		fs.SetOutput(out)
@@ -58,6 +60,7 @@ Flags:`)
 	if err := fs.Parse(argv[parseOffset:]); err != nil {
 		return err
 	}
+	gb.Config.CheckVersionUp = checkVersionUp
 
 	gb.Target = fs.Arg(0)
 	_, err := gb.Run()
