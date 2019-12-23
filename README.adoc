@@ -4,12 +4,13 @@
 
 == USAGE
 
-    Usage: gobump (major|minor|patch|set <version>) [-w] [-v] [<path>]
+    Usage: gobump (major|minor|patch|up|set <version>|show) [-w] [-v] [<path>]
 
     Commands:
       major             bump major version up
       minor             bump minor version up
       patch             bump patch version up
+      up                bump up with prompt
       set <version>     set exact version (no increments)
       show              only show the versions (implies -v)
 

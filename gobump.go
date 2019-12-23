@@ -3,6 +3,7 @@ package gobump
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -113,6 +114,8 @@ type Config struct {
 	Exact string
 	// The pattern of "version" variable/constants. Defaults to /^(?i)version$/.
 	NamePattern *regexp.Regexp
+	// Prompt the bump up target (major, minor or patch)
+	Prompt bool
 	// Default version in the case none was set. Defaults to "0.0.0".
 	Default string
 }
@@ -214,6 +217,28 @@ func (conf Config) ProcessNode(fset *token.FileSet, node ast.Node) (versions map
 					}
 
 					currentVersion = v
+				}
+
+				if conf.Prompt {
+					result, err := promptTarget(currentVersion, fset.File(n.Pos()).Name())
+					if err != nil {
+						nodeErr = err
+						return false
+					}
+					conf.PatchDelta = 0
+					conf.MinorDelta = 0
+					conf.MajorDelta = 0
+					switch result {
+					case promptResultPatch:
+						conf.PatchDelta = 1
+					case promptResultMinor:
+						conf.MinorDelta = 1
+					case promptResultMajor:
+						conf.MajorDelta = 1
+					default:
+						nodeErr = errors.New("unexpected target")
+						return false
+					}
 				}
 
 				ver, err := conf.bumpedVersion(currentVersion)
