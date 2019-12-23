@@ -4,7 +4,7 @@
 
 == USAGE
 
-    Usage: gobump (major|minor|patch|set <version>) [-w] [-v] [<path>]
+    Usage: gobump (major|minor|patch|set <version>|show) [-w] [-v] [-u] [<path>]
 
     Commands:
       major             bump major version up
@@ -14,8 +14,10 @@
       show              only show the versions (implies -v)
 
     Flags:
-      -v=false: show the resulting version values
-      -w=false: write result to (source) file instead of stdout
+      -r    output in raw text instead of JSON when output exists
+      -u    ensure version up with the set command
+      -v    show the resulting version values
+      -w    write result to (source) file instead of stdout
 
 == EXAMPLE
 

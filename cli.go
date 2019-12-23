@@ -20,7 +20,7 @@ func Run(argv []string, outStream, errStream io.Writer) error {
 	fs.Usage = func() {
 		out := errStream
 		fs.SetOutput(out)
-		fmt.Fprintln(out, `Usage: gobump (major|minor|patch|set <version>) [-w] [-v] [<path>]
+		fmt.Fprintln(out, `Usage: gobump (major|minor|patch|set <version>|show) [-w] [-v] [-u] [<path>]
 
 Commands:
   major             bump major version up
