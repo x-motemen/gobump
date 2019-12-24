@@ -18,12 +18,13 @@ func Run(argv []string, outStream, errStream io.Writer) error {
 	fs.Usage = func() {
 		out := errStream
 		fs.SetOutput(out)
-		fmt.Fprintln(out, `Usage: gobump (major|minor|patch|set <version>) [-w] [-v] [<path>]
+		fmt.Fprintln(out, `Usage: gobump (major|minor|patch|up|set <version>|show) [-w] [-v] [<path>]
 
 Commands:
   major             bump major version up
   minor             bump minor version up
   patch             bump patch version up
+  up                bump up with prompt
   set <version>     set exact version (no increments)
   show              only show the versions (implies -v)
 Flags:`)
@@ -42,6 +43,8 @@ Flags:`)
 		gb.Config.MinorDelta = 1
 	case "patch":
 		gb.Config.PatchDelta = 1
+	case "up":
+		gb.Config.Prompt = true
 	case "set":
 		if len(argv) < 2 {
 			return fmt.Errorf("please specify a version to set")
