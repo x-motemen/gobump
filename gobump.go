@@ -16,7 +16,7 @@ import (
 	"go/printer"
 	"go/token"
 
-	"github.com/blang/semver"
+	"github.com/Masterminds/semver"
 )
 
 // Gobump is main application struct
@@ -272,32 +272,35 @@ func (conf Config) ProcessNode(fset *token.FileSet, node ast.Node) (versions map
 // bumpedVersion returns new bumped-up version according to given spec.
 func (conf Config) bumpedVersion(version string) (string, error) {
 	if conf.Exact != "" {
-		exact, err := semver.New(conf.Exact)
+		exact, err := semver.StrictNewVersion(conf.Exact)
 		if err != nil {
 			return "", err
 		}
-		if v, err := semver.Parse(version); err == nil {
-			if !exact.GT(v) {
+		if v, err := semver.StrictNewVersion(version); err == nil {
+			if !exact.GreaterThan(v) {
 				return "", fmt.Errorf("version %s is not greater than the current version", exact)
 			}
 		}
 		return exact.String(), nil
 	}
 
-	v, err := semver.Parse(version)
+	v, err := semver.StrictNewVersion(version)
 	if err != nil {
 		return "", err
 	}
 
 	if conf.MajorDelta > 0 {
-		v.Major = v.Major + conf.MajorDelta
-		v.Minor = 0
-		v.Patch = 0
+		for i := uint64(0); i < conf.MajorDelta; i++ {
+			*v = v.IncMajor()
+		}
 	} else if conf.MinorDelta > 0 {
-		v.Minor = v.Minor + conf.MinorDelta
-		v.Patch = 0
+		for i := uint64(0); i < conf.MinorDelta; i++ {
+			*v = v.IncMinor()
+		}
 	} else if conf.PatchDelta > 0 {
-		v.Patch = v.Patch + conf.PatchDelta
+		for i := uint64(0); i < conf.PatchDelta; i++ {
+			*v = v.IncPatch()
+		}
 	}
 
 	return v.String(), nil
