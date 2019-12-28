@@ -276,7 +276,11 @@ func (conf Config) bumpedVersion(version string) (string, error) {
 		if err != nil {
 			return "", err
 		}
-
+		if v, err := semver.Parse(version); err == nil {
+			if !exact.GT(v) {
+				return "", fmt.Errorf("version %s is not greater than the current version", exact)
+			}
+		}
 		return exact.String(), nil
 	}
 
