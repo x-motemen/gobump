@@ -16,7 +16,7 @@ import (
 	"go/printer"
 	"go/token"
 
-	"github.com/Masterminds/semver"
+	"github.com/Masterminds/semver/v3"
 )
 
 // Gobump is main application struct
