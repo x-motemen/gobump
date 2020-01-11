@@ -49,7 +49,7 @@ DIST_DIR = dist/v$(VERSION)
 .PHONY: crossbuild
 crossbuild: CREDITS
 	rm -rf $(DIST_DIR)
-	godzil crossbuild -build-ldflags=$(BUILD_LDFLAGS)
+	godzil crossbuild -pv=v$(VERSION) -build-ldflags=$(BUILD_LDFLAGS) -d $(DIST_DIR) ./cmd/*
 
 .PHONY: upload
 upload:
