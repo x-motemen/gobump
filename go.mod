@@ -1,4 +1,4 @@
-module github.com/motemen/gobump
+module github.com/x-motemen/gobump
 
 go 1.13
 
