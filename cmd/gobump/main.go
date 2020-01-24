@@ -22,7 +22,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/motemen/gobump"
+	"github.com/x-motemen/gobump"
 )
 
 func main() {
