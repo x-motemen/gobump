@@ -1,5 +1,10 @@
 # Changelog
 
+## [v0.2.0](https://github.com/x-motemen/gobump/compare/v0.1.0...v0.2.0) (2020-01-24)
+
+* update deps [#17](https://github.com/x-motemen/gobump/pull/17) ([Songmu](https://github.com/Songmu))
+* update module name to github.com/x-motemen/gobump [#16](https://github.com/x-motemen/gobump/pull/16) ([Songmu](https://github.com/Songmu))
+
 ## [v0.1.0](https://github.com/motemen/gobump/compare/cbe5aab9361f...v0.1.0) (2020-01-12)
 
 * Maintain release engineering for executable binary release [#15](https://github.com/motemen/gobump/pull/15) ([Songmu](https://github.com/Songmu))
