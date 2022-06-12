@@ -25,11 +25,11 @@ lint: devel-deps
 
 .PHONY: build
 build: deps
-	go build $(VERBOSE_FLAG) -ldflags=$(BUILD_LDFLAGS)
+	go build $(VERBOSE_FLAG) -ldflags=$(BUILD_LDFLAGS) ./cmd/gobump
 
 .PHONY: install
 install: deps
-	go install $(VERBOSE_FLAG) -ldflags=$(BUILD_LDFLAGS)
+	go install $(VERBOSE_FLAG) -ldflags=$(BUILD_LDFLAGS) ./cmd/gobump
 
 .PHONY: release
 release: devel-deps
