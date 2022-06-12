@@ -1,3 +1,5 @@
+// Package gobump bumps up program version by rewriting `version`-like
+// variable/constant values in Go source code.
 package gobump
 
 import (
@@ -75,8 +77,8 @@ func (gb *Gobump) Run() (map[string]map[string]string, error) {
 		}
 	}
 
-	if found == false {
-		return nil, fmt.Errorf("version not found")
+	if !found {
+		return nil, errors.New("version not found")
 	}
 	return ret, nil
 }
