@@ -1,6 +1,7 @@
 package gobump
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -32,7 +33,7 @@ Flags:`)
 	}
 
 	if len(argv) < 1 {
-		return fmt.Errorf("please specify subcommand. `gobump -h` for more details")
+		return errors.New("please specify subcommand. `gobump -h` for more details")
 	}
 
 	parseOffset := 1
@@ -47,7 +48,7 @@ Flags:`)
 		gb.Config.Prompt = true
 	case "set":
 		if len(argv) < 2 {
-			return fmt.Errorf("please specify a version to set")
+			return errors.New("please specify a version to set")
 		}
 		gb.Config.Exact = argv[1]
 		parseOffset = 2

@@ -76,7 +76,7 @@ func (gb *Gobump) Run() (map[string]map[string]string, error) {
 	}
 
 	if found == false {
-		return nil, fmt.Errorf("version not found")
+		return nil, errors.New("version not found")
 	}
 	return ret, nil
 }
