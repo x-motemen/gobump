@@ -21,7 +21,7 @@ test: deps
 
 .PHONY: lint
 lint: devel-deps
-	staticcheck -checks all,-ST1000 ./...
+	staticcheck -checks all ./...
 
 .PHONY: build
 build: deps

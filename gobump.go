@@ -1,3 +1,5 @@
+// Package gobump bumps up program version by rewriting `version`-like
+// variable/constant values in Go source code.
 package gobump
 
 import (
