@@ -11,7 +11,7 @@ deps:
 
 .PHONY: devel-deps
 devel-deps: deps
-	go install golang.org/x/lint/golint@latest
+	go install honnef.co/go/tools/cmd/staticcheck@latest
 	go install github.com/Songmu/godzil/cmd/godzil@latest
 	go install github.com/tcnksm/ghr@latest
 
@@ -21,7 +21,7 @@ test: deps
 
 .PHONY: lint
 lint: devel-deps
-	golint -set_exit_status ./...
+	staticcheck -checks all,-ST1000 ./...
 
 .PHONY: build
 build: deps

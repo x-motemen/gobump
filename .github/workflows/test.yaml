@@ -22,9 +22,7 @@ jobs:
     - name: checkout
       uses: actions/checkout@v3
     - name: lint
-      run: |
-        GOBIN=$(pwd)/bin go install golang.org/x/lint/golint@latest
-        bin/golint -set_exit_status ./...
+      run: make lint
       if: "matrix.os == 'ubuntu-latest' || matrix.os == 'macOS-latest'"
     - name: test
       run: go test -coverprofile coverage.out -covermode atomic ./...
