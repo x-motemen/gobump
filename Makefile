@@ -6,7 +6,7 @@ u := $(if $(update),-u)
 
 .PHONY: deps
 deps:
-	go get ${u} -d $(VERBOSE_FLAG)
+	go get ${u} $(VERBOSE_FLAG)
 	go mod tidy
 
 .PHONY: devel-deps
@@ -42,7 +42,7 @@ DIST_DIR = dist/v$(VERSION)
 .PHONY: crossbuild
 crossbuild: CREDITS
 	rm -rf $(DIST_DIR)
-	godzil crossbuild -pv=v$(VERSION) -build-ldflags=$(BUILD_LDFLAGS) -d $(DIST_DIR) ./cmd/*
+	godzil crossbuild -pv=v$(VERSION) -build-ldflags=$(BUILD_LDFLAGS) $(DIST_DIR) ./cmd/*
 
 .PHONY: upload
 upload:
