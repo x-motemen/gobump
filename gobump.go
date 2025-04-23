@@ -173,9 +173,6 @@ func (conf Config) ProcessNode(fset *token.FileSet, node ast.Node) (versions map
 
 	ast.Inspect(node, func(n ast.Node) bool {
 		switch decl := n.(type) {
-		case *ast.Package:
-			return true
-
 		case *ast.File:
 			return true
 
