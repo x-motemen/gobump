@@ -124,7 +124,7 @@ type Config struct {
 
 // Process takes a Go source file and bumps version declaration according to conf.
 // Returns the modified code and a map from identifiers to updated versions and an error, if any.
-func (conf Config) Process(filename string, src interface{}) ([]byte, map[string]string, error) {
+func (conf Config) Process(filename string, src any) ([]byte, map[string]string, error) {
 	fset := token.NewFileSet()
 	file, err := parser.ParseFile(fset, filename, src, parser.ParseComments)
 	if err != nil {
