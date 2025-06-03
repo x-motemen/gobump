@@ -15,12 +15,12 @@ jobs:
         - macOS-latest
         - windows-latest
     steps:
-    - name: setup go
-      uses: actions/setup-go@v3
-      with:
-        go-version: 1.x
     - name: checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
+    - name: setup go
+      uses: actions/setup-go@v5
+      with:
+        go-version-file: go.mod
     - name: lint
       run: make lint
       if: "matrix.os == 'ubuntu-latest' || matrix.os == 'macOS-latest'"
