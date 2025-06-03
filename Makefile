@@ -21,10 +21,7 @@ test: deps
 
 .PHONY: lint
 lint: devel-deps
-	# nop for now
-	#   staticcheck fails with following error:
-	#   ast.Package is deprecated: use the type checker [go/types] instead;
-	# staticcheck -checks all ./...
+	staticcheck -checks all ./...
 
 .PHONY: build
 build: deps

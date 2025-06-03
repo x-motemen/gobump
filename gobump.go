@@ -173,6 +173,7 @@ func (conf Config) ProcessNode(fset *token.FileSet, node ast.Node) (versions map
 
 	ast.Inspect(node, func(n ast.Node) bool {
 		switch decl := n.(type) {
+		//lint:ignore SA1019 ...
 		case *ast.Package:
 			return true
 
