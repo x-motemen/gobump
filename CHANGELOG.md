@@ -1,5 +1,10 @@
 # Changelog
 
+## [v0.3.0](https://github.com/x-motemen/gobump/compare/v0.2.0...v0.3.0) - 2025-06-03
+- Maintenance 2022-06 by @itchyny in https://github.com/x-motemen/gobump/pull/18
+- update Go version to v1.24 and update deps by @Songmu in https://github.com/x-motemen/gobump/pull/21
+- introduce tagpr by @Songmu in https://github.com/x-motemen/gobump/pull/22
+
 ## [v0.2.0](https://github.com/x-motemen/gobump/compare/v0.1.0...v0.2.0) (2020-01-24)
 
 * update deps [#17](https://github.com/x-motemen/gobump/pull/17) ([Songmu](https://github.com/Songmu))
