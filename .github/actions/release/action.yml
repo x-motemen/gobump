@@ -1,0 +1,19 @@
+name: release
+description: release gobump
+inputs:
+  token:
+    description: GitHub token
+    required: true
+runs:
+  using: composite
+  steps:
+  - name: setup go
+    uses: actions/setup-go@v5
+    with:
+      go-version-file: go.mod
+  - name: release
+    run: |
+      make crossbuild upload
+    shell: bash
+    env:
+      GITHUB_TOKEN: ${{ inputs.token }}
