@@ -1,5 +1,7 @@
 # Changelog
 
+## [v0.3.1](https://github.com/x-motemen/gobump/compare/v0.3.0...v0.3.1) - 2025-06-03
+
 ## [v0.3.0](https://github.com/x-motemen/gobump/compare/v0.2.0...v0.3.0) - 2025-06-03
 - Maintenance 2022-06 by @itchyny in https://github.com/x-motemen/gobump/pull/18
 - update Go version to v1.24 and update deps by @Songmu in https://github.com/x-motemen/gobump/pull/21
