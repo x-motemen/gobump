@@ -9,12 +9,6 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@v4
-    - name: setup go
-      uses: actions/setup-go@v5
+    - uses: ./.github/actions/release
       with:
-        go-version-file: go.mod
-    - name: release
-      env:
-        GITHUB_TOKEN: ${{ secrets.github_token }}
-      run: |
-        make crossbuild upload
+        token: ${{ secrets.GITHUB_TOKEN }}
